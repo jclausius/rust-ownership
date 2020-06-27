@@ -94,6 +94,30 @@ fn main() {
         //   println!("s2 cannot be used since it was moved {}", s2);
 
      } // s3 dropped out of scope; s2 was moved already; s1 out of scope and dropped
+
+    /*  Taking ownership of a variable follows same pattern every time:
+          assigning a value to another variable moves it. WHen a var
+          that includes data on the heap goes out of scope, the value 
+          will be cleaned up by 'drop' unless data has been moved to be
+          owned by another variable.
+
+        Taking ownership and then return ownership with every function is
+          a bit tedious.  What if we want to let a function use a value
+          but not take ownership?  It's quite annoying that anything we
+          pass in also needs to be passed back if it is to be used again,
+          in addition to any data resuting from the function.
+
+        In the case outlined above, a tuple becomes useful
+    */
+
+    {
+        // Ex 5 using tuple to re-assign a 'moved' trait when
+        // calling a function
+        let s1 = String::from("Ex 5: 5:Hello");
+        let (s2, len) = calculate_length(s1); // after this s1 is invalid since it as moved into calculate_length
+        // you can use s2 here
+        println!("The length of the string '{}' is {}", s2, len);
+    }
 }
 
 
@@ -126,4 +150,11 @@ fn gives_ownership() -> String
 fn takes_and_gives_back(a: String) -> String // 'a' comes into scope
 {
     a // 'a' is returned and is moved into the var of the callee.
+}
+
+
+fn calculate_length(s: String) -> (String, usize)
+{
+    let length_of_string = s.len();
+    (s, length_of_string)
 }
